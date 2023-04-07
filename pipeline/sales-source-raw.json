@@ -76,6 +76,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -173,6 +174,7 @@
 								],
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
@@ -191,7 +193,7 @@
 			},
 			"storage_secret": {
 				"type": "string",
-				"defaultValue": "tmobile-source-secret"
+				"defaultValue": "source-storage-secret"
 			}
 		},
 		"variables": {
