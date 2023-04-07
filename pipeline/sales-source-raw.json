@@ -1,0 +1,207 @@
+{
+	"name": "sales-source-raw",
+	"properties": {
+		"activities": [
+			{
+				"name": "checkSourceFile",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"wildcardFileName": "*.json",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "CatalogDataset",
+						"type": "DatasetReference",
+						"parameters": {
+							"subject": {
+								"value": "@pipeline().parameters.subject",
+								"type": "Expression"
+							},
+							"storage_secret": {
+								"value": "@pipeline().parameters.storage_secret",
+								"type": "Expression"
+							}
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "GetRootMetadata",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "SourceDataset",
+						"type": "DatasetReference",
+						"parameters": {
+							"subject": {
+								"value": "@pipeline().parameters.subject",
+								"type": "Expression"
+							},
+							"storage_secret": {
+								"value": "@pipeline().parameters.storage_secret",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "checkSourceFile",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "list_of_files",
+					"value": {
+						"value": "@activity('checkSourceFile').output.value",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "IterateRootFolder",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GetRootMetadata",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetRootMetadata').output.childItems",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "AppendDataItems",
+							"type": "AppendVariable",
+							"dependsOn": [
+								{
+									"activity": "GetChildMetaData",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "list_of_data_files",
+								"value": {
+									"value": "@activity('GetChildMetaData').output.childItems",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "GetChildMetaData",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "SourceDataset",
+									"type": "DatasetReference",
+									"parameters": {
+										"subject": {
+											"value": "@concat(concat(pipeline().parameters.subject, '/'), item().name)",
+											"type": "Expression"
+										},
+										"storage_secret": {
+											"value": "@pipeline().parameters.storage_secret",
+											"type": "Expression"
+										}
+									}
+								},
+								"fieldList": [
+									"childItems"
+								],
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"subject": {
+				"type": "string",
+				"defaultValue": "Sales"
+			},
+			"storage_secret": {
+				"type": "string",
+				"defaultValue": "tmobile-source-secret"
+			}
+		},
+		"variables": {
+			"list_of_files": {
+				"type": "Array"
+			},
+			"list_of_data_files": {
+				"type": "Array"
+			}
+		},
+		"annotations": []
+	}
+}

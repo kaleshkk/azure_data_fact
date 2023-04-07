@@ -1,0 +1,39 @@
+{
+	"name": "SourceDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1DEV",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"storage_secret": {
+					"value": "@dataset().storage_secret",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"subject": {
+				"type": "string"
+			},
+			"storage_secret": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": {
+					"value": "@dataset().subject",
+					"type": "Expression"
+				},
+				"container": "landing"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
