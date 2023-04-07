@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "AzureKeyVault",
 		"typeProperties": {
-			"baseUrl": "https://blobLinkedServiceDEV.vault.azure.net/"
+			"baseUrl": "https://tmobkeyvaultdev.vault.azure.net/"
 		}
 	}
 }
