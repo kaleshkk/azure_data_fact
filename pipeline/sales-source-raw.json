@@ -58,7 +58,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "SourceDataset",
+						"referenceName": "CatalogDataset",
 						"type": "DatasetReference",
 						"parameters": {
 							"subject": {
@@ -80,7 +80,7 @@
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
-						"type": "DelimitedTextReadSettings"
+						"type": "JsonReadSettings"
 					}
 				}
 			},
@@ -184,7 +184,7 @@
 								},
 								"ifTrueActivities": [
 									{
-										"name": "Get Metadata1",
+										"name": "GetChildMetadats",
 										"type": "GetMetadata",
 										"dependsOn": [],
 										"policy": {
