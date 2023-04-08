@@ -127,32 +127,64 @@
 						"value": "@activity('GetRootMetadata').output.childItems",
 						"type": "Expression"
 					},
+					"isSequential": true,
 					"activities": [
 						{
-							"name": "If Condition",
-							"description": "@contains(variables('list_of_files'), item().name)",
-							"type": "IfCondition",
+							"name": "Filter1",
+							"type": "Filter",
+							"dependsOn": [
+								{
+									"activity": "SetCurrentFileName",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"items": {
+									"value": "@variables('list_of_files')",
+									"type": "Expression"
+								},
+								"condition": {
+									"value": "@equals(item()['file_name'], variables('current_file_name'))\n",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "SetCurrentFileName",
+							"type": "SetVariable",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
+								"variableName": "current_file_name",
+								"value": {
+									"value": "@item().name",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "If Condition1",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "Filter1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
 								"expression": {
-									"value": "@contains(variables('list_of_files'), item().name)",
+									"value": "@not(\n    empty(activity('Filter1').output)\n)",
 									"type": "Expression"
 								},
-								"ifFalseActivities": [
-									{
-										"name": "Wait1",
-										"type": "Wait",
-										"dependsOn": [],
-										"userProperties": [],
-										"typeProperties": {
-											"waitTimeInSeconds": 1
-										}
-									}
-								],
 								"ifTrueActivities": [
 									{
-										"name": "GetChildMetaData",
+										"name": "Get Metadata1",
 										"type": "GetMetadata",
 										"dependsOn": [],
 										"policy": {
@@ -162,49 +194,9 @@
 											"secureOutput": false,
 											"secureInput": false
 										},
-										"userProperties": [],
-										"typeProperties": {
-											"dataset": {
-												"referenceName": "SourceDataset",
-												"type": "DatasetReference",
-												"parameters": {
-													"subject": {
-														"value": "@concat(concat(pipeline().parameters.subject, '/'), item().name)",
-														"type": "Expression"
-													},
-													"storage_secret": {
-														"value": "@pipeline().parameters.storage_secret",
-														"type": "Expression"
-													}
-												}
-											},
-											"fieldList": [
-												"childItems"
-											],
-											"storeSettings": {
-												"type": "AzureBlobStorageReadSettings",
-												"recursive": true,
-												"enablePartitionDiscovery": false
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
-										}
+										"userProperties": []
 									}
 								]
-							}
-						},
-						{
-							"name": "Set variable2",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "test2",
-								"value": {
-									"value": "@variables('list_of_files')",
-									"type": "Expression"
-								}
 							}
 						}
 					]
@@ -225,14 +217,8 @@
 			"list_of_files": {
 				"type": "Array"
 			},
-			"list_of_data_files": {
-				"type": "Array"
-			},
-			"test": {
+			"current_file_name": {
 				"type": "String"
-			},
-			"test2": {
-				"type": "Array"
 			}
 		},
 		"annotations": []
