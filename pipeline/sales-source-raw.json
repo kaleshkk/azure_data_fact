@@ -194,7 +194,40 @@
 											"secureOutput": false,
 											"secureInput": false
 										},
-										"userProperties": []
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "SourceDataset",
+												"type": "DatasetReference",
+												"parameters": {
+													"subject": {
+														"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
+														"type": "Expression"
+													},
+													"storage_secret": {
+														"value": "@pipeline().parameters.storage_secret",
+														"type": "Expression"
+													},
+													"file_name": {
+														"value": "@activity('Filter1').output.file_name",
+														"type": "Expression"
+													}
+												}
+											},
+											"fieldList": [
+												"structure",
+												"exists",
+												"size",
+												"columnCount"
+											],
+											"storeSettings": {
+												"type": "AzureBlobStorageReadSettings",
+												"enablePartitionDiscovery": false
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										}
 									}
 								]
 							}
