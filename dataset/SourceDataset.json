@@ -13,10 +13,15 @@
 		},
 		"parameters": {
 			"subject": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "Sales/20230408"
 			},
 			"storage_secret": {
 				"type": "string"
+			},
+			"file_name": {
+				"type": "string",
+				"defaultValue": "sales-20230408.csv"
 			}
 		},
 		"annotations": [],
@@ -24,6 +29,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().file_name",
+					"type": "Expression"
+				},
 				"folderPath": {
 					"value": "@dataset().subject",
 					"type": "Expression"
