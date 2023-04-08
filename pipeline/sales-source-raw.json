@@ -62,7 +62,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"subject": {
-								"value": "@pipeline().parameters.subject",
+								"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
 								"type": "Expression"
 							},
 							"storage_secret": {
@@ -113,6 +113,12 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
+					},
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
 				"userProperties": [],
@@ -123,63 +129,68 @@
 					},
 					"activities": [
 						{
-							"name": "AppendDataItems",
-							"type": "AppendVariable",
-							"dependsOn": [
-								{
-									"activity": "GetChildMetaData",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "list_of_data_files",
-								"value": {
-									"value": "@activity('GetChildMetaData').output.childItems",
-									"type": "Expression"
-								}
-							}
-						},
-						{
-							"name": "GetChildMetaData",
-							"type": "GetMetadata",
+							"name": "If Condition",
+							"type": "IfCondition",
 							"dependsOn": [],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
 							"userProperties": [],
 							"typeProperties": {
-								"dataset": {
-									"referenceName": "SourceDataset",
-									"type": "DatasetReference",
-									"parameters": {
-										"subject": {
-											"value": "@concat(concat(pipeline().parameters.subject, '/'), item().name)",
-											"type": "Expression"
-										},
-										"storage_secret": {
-											"value": "@pipeline().parameters.storage_secret",
-											"type": "Expression"
+								"expression": {
+									"value": "@contains(variables('list_of_files'), item().name)",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Wait1",
+										"type": "Wait",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"waitTimeInSeconds": 1
 										}
 									}
-								},
-								"fieldList": [
-									"childItems"
 								],
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
+								"ifTrueActivities": [
+									{
+										"name": "GetChildMetaData",
+										"type": "GetMetadata",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "SourceDataset",
+												"type": "DatasetReference",
+												"parameters": {
+													"subject": {
+														"value": "@concat(concat(pipeline().parameters.subject, '/'), item().name)",
+														"type": "Expression"
+													},
+													"storage_secret": {
+														"value": "@pipeline().parameters.storage_secret",
+														"type": "Expression"
+													}
+												}
+											},
+											"fieldList": [
+												"childItems"
+											],
+											"storeSettings": {
+												"type": "AzureBlobStorageReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										}
+									}
+								]
 							}
 						}
 					]
