@@ -130,6 +130,7 @@
 					"activities": [
 						{
 							"name": "If Condition",
+							"description": "@contains(variables('list_of_files'), item().name)",
 							"type": "IfCondition",
 							"dependsOn": [],
 							"userProperties": [],
@@ -192,6 +193,19 @@
 									}
 								]
 							}
+						},
+						{
+							"name": "Set variable2",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "test2",
+								"value": {
+									"value": "@variables('list_of_files')",
+									"type": "Expression"
+								}
+							}
 						}
 					]
 				}
@@ -212,6 +226,12 @@
 				"type": "Array"
 			},
 			"list_of_data_files": {
+				"type": "Array"
+			},
+			"test": {
+				"type": "String"
+			},
+			"test2": {
 				"type": "Array"
 			}
 		},
