@@ -1,0 +1,50 @@
+{
+	"name": "RawDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1DEV",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"storage_secret": {
+					"value": "@dataset().storage_secret",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"subject": {
+				"type": "string",
+				"defaultValue": "Sales/20230408"
+			},
+			"storage_secret": {
+				"type": "string",
+				"defaultValue": "raw-storage-secret"
+			},
+			"file_name": {
+				"type": "string",
+				"defaultValue": "sales-20230408.csv"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().file_name",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().subject",
+					"type": "Expression"
+				},
+				"container": "imported"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

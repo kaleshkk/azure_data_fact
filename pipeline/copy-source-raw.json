@@ -1,0 +1,135 @@
+{
+	"name": "copy-source-raw",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Metadata1",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "SourceDataset",
+						"type": "DatasetReference",
+						"parameters": {
+							"subject": {
+								"value": "@pipeline().parameters.subject",
+								"type": "Expression"
+							},
+							"storage_secret": {
+								"value": "@pipeline().parameters.storage_secret",
+								"type": "Expression"
+							},
+							"file_name": {
+								"value": "@pipeline().parameters.file_name",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"structure"
+					],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SourceDataset",
+						"type": "DatasetReference",
+						"parameters": {
+							"subject": "Sales/20230409",
+							"storage_secret": {
+								"value": "@pipeline().parameters.storage_secret",
+								"type": "Expression"
+							},
+							"file_name": "sales-20230409.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SourceDataset",
+						"type": "DatasetReference",
+						"parameters": {
+							"subject": "Sales/20230408",
+							"file_name": "sales-20230408.csv"
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"subject": {
+				"type": "string",
+				"defaultValue": "Sales/20230409"
+			},
+			"storage_secret": {
+				"type": "string",
+				"defaultValue": "source-storage-secret"
+			},
+			"file_name": {
+				"type": "string",
+				"defaultValue": "sales-20230409.csv"
+			}
+		},
+		"annotations": []
+	}
+}
