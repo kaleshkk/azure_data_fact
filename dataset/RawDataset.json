@@ -23,6 +23,10 @@
 			"file_name": {
 				"type": "string",
 				"defaultValue": "sales-20230408.csv"
+			},
+			"container": {
+				"type": "string",
+				"defaultValue": "imported"
 			}
 		},
 		"annotations": [],
@@ -38,7 +42,10 @@
 					"value": "@dataset().subject",
 					"type": "Expression"
 				},
-				"container": "imported"
+				"container": {
+					"value": "@dataset().container",
+					"type": "Expression"
+				}
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
