@@ -193,7 +193,23 @@
 												"referenceName": "copy-source-raw",
 												"type": "PipelineReference"
 											},
-											"waitOnCompletion": true
+											"waitOnCompletion": true,
+											"parameters": {
+												"subject": {
+													"value": "@pipeline().parameters.subject",
+													"type": "Expression"
+												},
+												"storage_secret": {
+													"value": "@pipeline().parameters.storage_secret",
+													"type": "Expression"
+												},
+												"file_name": {
+													"value": "@activity('Filter1').output",
+													"type": "Expression"
+												},
+												"success_container": "imported",
+												"error_container": "error"
+											}
 										}
 									}
 								]
