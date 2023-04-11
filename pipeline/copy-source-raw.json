@@ -47,81 +47,6 @@
 				}
 			},
 			{
-				"name": "Copy data1",
-				"type": "Copy",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "DelimitedTextSource",
-						"storeSettings": {
-							"type": "AzureBlobStorageReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
-						}
-					},
-					"sink": {
-						"type": "DelimitedTextSink",
-						"storeSettings": {
-							"type": "AzureBlobStorageWriteSettings"
-						},
-						"formatSettings": {
-							"type": "DelimitedTextWriteSettings",
-							"quoteAllText": true,
-							"fileExtension": ".txt"
-						}
-					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"typeConversion": true,
-						"typeConversionSettings": {
-							"allowDataTruncation": true,
-							"treatBooleanAsNumber": false
-						}
-					}
-				},
-				"inputs": [
-					{
-						"referenceName": "SourceDataset",
-						"type": "DatasetReference",
-						"parameters": {
-							"subject": "Sales/20230409",
-							"storage_secret": {
-								"value": "@pipeline().parameters.storage_secret",
-								"type": "Expression"
-							},
-							"file_name": "sales-20230409.csv"
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "RawDataset",
-						"type": "DatasetReference",
-						"parameters": {
-							"subject": "Sales/20230408",
-							"storage_secret": "raw-storage-secret",
-							"file_name": "sales-20230408.csv",
-							"container": {
-								"value": "@pipeline().parameters.success_container",
-								"type": "Expression"
-							}
-						}
-					}
-				]
-			},
-			{
 				"name": "LookUpAuditTable",
 				"type": "Lookup",
 				"dependsOn": [],
@@ -150,9 +75,15 @@
 				}
 			},
 			{
-				"name": "ParseJson",
-				"type": "SetVariable",
+				"name": "If Condition1",
+				"type": "IfCondition",
 				"dependsOn": [
+					{
+						"activity": "Get Metadata1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
 					{
 						"activity": "LookUpAuditTable",
 						"dependencyConditions": [
@@ -162,11 +93,99 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "existing_schema",
-					"value": {
-						"value": "@json(activity('LookUpAuditTable').output.firstRow.schema)",
+					"expression": {
+						"value": "@equals(activity('Get Metadata1').output.structure,\n    createArray(\n        json(activity('LookUpAuditTable').output.firstRow.schema)\n    )\n)",
 						"type": "Expression"
-					}
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Copy data",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "SourceDataset",
+									"type": "DatasetReference",
+									"parameters": {
+										"subject": {
+											"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
+											"type": "Expression"
+										},
+										"storage_secret": {
+											"value": "@pipeline().parameters.storage_secret",
+											"type": "Expression"
+										},
+										"file_name": {
+											"value": "@pipeline().parameters.file_name",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "RawDataset",
+									"type": "DatasetReference",
+									"parameters": {
+										"subject": {
+											"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
+											"type": "Expression"
+										},
+										"storage_secret": "raw-storage-secret",
+										"file_name": {
+											"value": "@pipeline().parameters.file_name",
+											"type": "Expression"
+										},
+										"container": {
+											"value": "@pipeline().parameters.success_container",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
 				}
 			}
 		],
@@ -190,14 +209,6 @@
 			"error_container": {
 				"type": "string",
 				"defaultValue": "error"
-			}
-		},
-		"variables": {
-			"existing_schema": {
-				"type": "Array"
-			},
-			"schema_encoded": {
-				"type": "String"
 			}
 		},
 		"annotations": []
