@@ -97,6 +97,17 @@
 						"value": "@equals(activity('Get Metadata1').output.structure,\n    createArray(\n        json(activity('LookUpAuditTable').output.firstRow.schema)\n    )\n)",
 						"type": "Expression"
 					},
+					"ifFalseActivities": [
+						{
+							"name": "Wait1",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 1
+							}
+						}
+					],
 					"ifTrueActivities": [
 						{
 							"name": "Copy data",
