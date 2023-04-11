@@ -219,6 +219,12 @@
 			},
 			"current_file_name": {
 				"type": "String"
+			},
+			"existing_schema": {
+				"type": "Array"
+			},
+			"schema_encoded": {
+				"type": "String"
 			}
 		},
 		"annotations": []
