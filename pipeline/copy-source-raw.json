@@ -20,7 +20,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"subject": {
-								"value": "@pipeline().parameters.subject",
+								"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
 								"type": "Expression"
 							},
 							"storage_secret": {
@@ -38,6 +38,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -119,12 +120,80 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "LookUpAuditTable",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "SELECT schema_str as 'schema' FROM [dbo].[schema_table] WHERE subject = '@{pipeline().parameters.subject}'",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SchemaDataset",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "ParseJson",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "LookUpAuditTable",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "existing_schema",
+					"value": {
+						"value": "@json(activity('LookUpAuditTable').output.firstRow.schema[0])",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "schema_encoded",
+					"value": {
+						"value": "@string(activity('Get Metadata1').output.structure)",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
 			"subject": {
 				"type": "string",
-				"defaultValue": "Sales/20230409"
+				"defaultValue": "Sales"
 			},
 			"storage_secret": {
 				"type": "string",
@@ -141,6 +210,14 @@
 			"error_container": {
 				"type": "string",
 				"defaultValue": "error"
+			}
+		},
+		"variables": {
+			"existing_schema": {
+				"type": "Array"
+			},
+			"schema_encoded": {
+				"type": "String"
 			}
 		},
 		"annotations": []

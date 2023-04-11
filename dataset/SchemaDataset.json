@@ -1,0 +1,25 @@
+{
+	"name": "SchemaDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "subject",
+				"type": "varchar"
+			},
+			{
+				"name": "schema_str",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "schema_table"
+		}
+	}
+}
