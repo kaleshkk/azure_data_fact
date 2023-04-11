@@ -94,7 +94,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@equals(activity('Get Metadata1').output.structure,\n    createArray(\n        json(activity('LookUpAuditTable').output.firstRow.schema)\n    )\n)",
+						"value": "@equals(activity('Get Metadata1').output.structure,\n    json(activity('LookUpAuditTable').output.firstRow.schema)\n)",
 						"type": "Expression"
 					},
 					"ifFalseActivities": [
