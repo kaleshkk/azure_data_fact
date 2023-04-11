@@ -164,27 +164,7 @@
 				"typeProperties": {
 					"variableName": "existing_schema",
 					"value": {
-						"value": "@json(activity('LookUpAuditTable').output.firstRow.schema[0])",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "Set variable1",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Get Metadata1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "schema_encoded",
-					"value": {
-						"value": "@string(activity('Get Metadata1').output.structure)",
+						"value": "@json(activity('LookUpAuditTable').output.firstRow.schema)",
 						"type": "Expression"
 					}
 				}
