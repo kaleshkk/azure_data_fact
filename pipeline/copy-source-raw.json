@@ -145,6 +145,7 @@
 									}
 								},
 								"enableStaging": false,
+								"validateDataConsistency": false,
 								"translator": {
 									"type": "TabularTranslator",
 									"typeConversion": true,
