@@ -212,7 +212,7 @@
 			},
 			"file_name": {
 				"type": "string",
-				"defaultValue": "sales-20230411.csv"
+				"defaultValue": "sales-20230415.csv"
 			},
 			"success_container": {
 				"type": "string",
