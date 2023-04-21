@@ -8,6 +8,10 @@
 				"secret_name": {
 					"value": "@dataset().storage_secret",
 					"type": "Expression"
+				},
+				"storage_url": {
+					"value": "@dataset().storage_url",
+					"type": "Expression"
 				}
 			}
 		},
@@ -16,6 +20,9 @@
 				"type": "string"
 			},
 			"storage_secret": {
+				"type": "string"
+			},
+			"storage_url": {
 				"type": "string"
 			}
 		},
