@@ -30,6 +30,10 @@
 							"file_name": {
 								"value": "@pipeline().parameters.file_name",
 								"type": "Expression"
+							},
+							"storage_url": {
+								"value": "@pipeline().globalParameters.source_storage_url",
+								"type": "Expression"
 							}
 						}
 					},
@@ -171,6 +175,10 @@
 										"file_name": {
 											"value": "@pipeline().parameters.file_name",
 											"type": "Expression"
+										},
+										"storage_url": {
+											"value": "@pipeline().globalParameters.source_storage_url",
+											"type": "Expression"
 										}
 									}
 								}
@@ -191,6 +199,10 @@
 										},
 										"container": {
 											"value": "@pipeline().parameters.success_container",
+											"type": "Expression"
+										},
+										"storage_url": {
+											"value": "@pipeline().globalParameters.raw_storage_url",
 											"type": "Expression"
 										}
 									}
