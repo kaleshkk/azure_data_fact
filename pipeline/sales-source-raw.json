@@ -38,6 +38,10 @@
 							"storage_secret": {
 								"value": "@pipeline().parameters.storage_secret",
 								"type": "Expression"
+							},
+							"storage_url": {
+								"value": "@pipeline().globalParameters.source_storage_url",
+								"type": "Expression"
 							}
 						}
 					},
@@ -67,6 +71,10 @@
 							},
 							"storage_secret": {
 								"value": "@pipeline().parameters.storage_secret",
+								"type": "Expression"
+							},
+							"storage_url": {
+								"value": "@pipeline().globalParameters.source_storage_url",
 								"type": "Expression"
 							}
 						}
