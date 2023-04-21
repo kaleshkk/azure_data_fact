@@ -4,23 +4,24 @@
 		"parameters": {
 			"secret_name": {
 				"type": "string",
-				"defaultValue": "storage-souce-dev-key"
+				"defaultValue": "storage-raw-dev-key"
+			},
+			"storage_url": {
+				"type": "string",
+				"defaultValue": "https://tmobsourcedev.dfs.core.windows.net/"
 			}
 		},
 		"annotations": [],
 		"type": "AzureBlobFS",
 		"typeProperties": {
-			"url": "https://tmobsourcedev.dfs.core.windows.net/",
+			"url": "@{linkedService().storage_url}",
 			"accountKey": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
 					"referenceName": "AzureKeyVault1",
 					"type": "LinkedServiceReference"
 				},
-				"secretName": {
-					"value": "@linkedService().secret_name",
-					"type": "Expression"
-				}
+				"secretName": "storage-raw-dev-key"
 			}
 		}
 	}
