@@ -18,7 +18,7 @@
 			},
 			"storage_secret": {
 				"type": "string",
-				"defaultValue": "raw-storage-secret"
+				"defaultValue": "storage-souce-dev-key"
 			},
 			"file_name": {
 				"type": "string",
