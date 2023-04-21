@@ -5,6 +5,10 @@
 			"source_storage_url": {
 				"type": "string",
 				"value": "https://tmobsourcedev.dfs.core.windows.net/"
+			},
+			"raw_storage_url": {
+				"type": "string",
+				"value": "https://tmobrawdev.dfs.core.windows.net/"
 			}
 		}
 	},
