@@ -136,7 +136,7 @@
 								"sink": {
 									"type": "DelimitedTextSink",
 									"storeSettings": {
-										"type": "AzureBlobStorageWriteSettings"
+										"type": "AzureBlobFSWriteSettings"
 									},
 									"formatSettings": {
 										"type": "DelimitedTextWriteSettings",
@@ -184,7 +184,7 @@
 											"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
 											"type": "Expression"
 										},
-										"storage_secret": "raw-storage-secret",
+										"storage_secret": "storage-raw-dev-key",
 										"file_name": {
 											"value": "@pipeline().parameters.file_name",
 											"type": "Expression"
