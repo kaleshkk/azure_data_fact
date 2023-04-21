@@ -8,11 +8,11 @@
 		"AzureSqlDatabase1_connectionString": {
 			"value": ""
 		},
-		"AzureBlobStorage1DEV_properties_typeProperties_connectionString_secretName": {
-			"value": "@linkedService().storage_secret"
-		},
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"value": "https://tmobkeyvaultdev.vault.azure.net/"
+		},
+		"AzureDataLakeStorageDev_properties_typeProperties_url": {
+			"value": "@{linkedService().storage_url}"
 		}
 	}
 }

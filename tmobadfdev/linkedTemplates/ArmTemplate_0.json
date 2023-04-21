@@ -15,9 +15,9 @@
 			"type": "string",
 			"defaultValue": "https://tmobkeyvaultdev.vault.azure.net/"
 		},
-		"AzureBlobStorage1DEV_properties_typeProperties_connectionString_secretName": {
+		"AzureDataLakeStorageDev_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "@linkedService().storage_secret"
+			"defaultValue": "@{linkedService().storage_url}"
 		}
 	},
 	"variables": {
@@ -51,36 +51,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage1DEV')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"parameters": {
-					"storage_secret": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "AzureKeyVault1",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": {
-							"value": "[parameters('AzureBlobStorage1DEV_properties_typeProperties_connectionString_secretName')]",
-							"type": "Expression"
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault1')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/SchemaDataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -111,16 +81,56 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorageDev')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"secret_name": {
+						"type": "string",
+						"defaultValue": "storage-raw-dev-key"
+					},
+					"storage_url": {
+						"type": "string",
+						"defaultValue": "https://tmobsourcedev.dfs.core.windows.net/"
+					}
+				},
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorageDev_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault1",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": {
+							"value": "@linkedService().secret_name",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CatalogDataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1DEV",
+					"referenceName": "AzureDataLakeStorageDev",
 					"type": "LinkedServiceReference",
 					"parameters": {
-						"storage_secret": {
+						"secret_name": {
 							"value": "@dataset().storage_secret",
+							"type": "Expression"
+						},
+						"storage_url": {
+							"value": "@dataset().storage_url",
 							"type": "Expression"
 						}
 					}
@@ -131,24 +141,27 @@
 					},
 					"storage_secret": {
 						"type": "string"
+					},
+					"storage_url": {
+						"type": "string"
 					}
 				},
 				"annotations": [],
 				"type": "Json",
 				"typeProperties": {
 					"location": {
-						"type": "AzureBlobStorageLocation",
+						"type": "AzureBlobFSLocation",
 						"folderPath": {
 							"value": "@dataset().subject",
 							"type": "Expression"
 						},
-						"container": "landing"
+						"fileSystem": "landing"
 					}
 				},
 				"schema": {}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1DEV')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorageDev')]"
 			]
 		},
 		{
@@ -157,11 +170,15 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1DEV",
+					"referenceName": "AzureDataLakeStorageDev",
 					"type": "LinkedServiceReference",
 					"parameters": {
-						"storage_secret": {
+						"secret_name": {
 							"value": "@dataset().storage_secret",
+							"type": "Expression"
+						},
+						"storage_url": {
+							"value": "@dataset().storage_url",
 							"type": "Expression"
 						}
 					}
@@ -173,7 +190,7 @@
 					},
 					"storage_secret": {
 						"type": "string",
-						"defaultValue": "raw-storage-secret"
+						"defaultValue": "storage-raw-dev-key"
 					},
 					"file_name": {
 						"type": "string",
@@ -182,13 +199,16 @@
 					"container": {
 						"type": "string",
 						"defaultValue": "imported"
+					},
+					"storage_url": {
+						"type": "string"
 					}
 				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
-						"type": "AzureBlobStorageLocation",
+						"type": "AzureBlobFSLocation",
 						"fileName": {
 							"value": "@dataset().file_name",
 							"type": "Expression"
@@ -197,7 +217,7 @@
 							"value": "@dataset().subject",
 							"type": "Expression"
 						},
-						"container": {
+						"fileSystem": {
 							"value": "@dataset().container",
 							"type": "Expression"
 						}
@@ -210,7 +230,7 @@
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1DEV')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorageDev')]"
 			]
 		},
 		{
@@ -219,11 +239,15 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1DEV",
+					"referenceName": "AzureDataLakeStorageDev",
 					"type": "LinkedServiceReference",
 					"parameters": {
-						"storage_secret": {
+						"secret_name": {
 							"value": "@dataset().storage_secret",
+							"type": "Expression"
+						},
+						"storage_url": {
+							"value": "@dataset().storage_url",
 							"type": "Expression"
 						}
 					}
@@ -239,13 +263,16 @@
 					"file_name": {
 						"type": "string",
 						"defaultValue": "sales-20230408.csv"
+					},
+					"storage_url": {
+						"type": "string"
 					}
 				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
-						"type": "AzureBlobStorageLocation",
+						"type": "AzureBlobFSLocation",
 						"fileName": {
 							"value": "@dataset().file_name",
 							"type": "Expression"
@@ -254,7 +281,7 @@
 							"value": "@dataset().subject",
 							"type": "Expression"
 						},
-						"container": "landing"
+						"fileSystem": "landing"
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
@@ -264,7 +291,7 @@
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1DEV')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorageDev')]"
 			]
 		},
 		{
@@ -301,6 +328,10 @@
 									"file_name": {
 										"value": "@pipeline().parameters.file_name",
 										"type": "Expression"
+									},
+									"storage_url": {
+										"value": "@pipeline().globalParameters.source_storage_url",
+										"type": "Expression"
 									}
 								}
 							},
@@ -308,7 +339,7 @@
 								"structure"
 							],
 							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
+								"type": "AzureBlobFSReadSettings",
 								"recursive": true,
 								"enablePartitionDiscovery": false
 							},
@@ -397,7 +428,7 @@
 										"source": {
 											"type": "DelimitedTextSource",
 											"storeSettings": {
-												"type": "AzureBlobStorageReadSettings",
+												"type": "AzureBlobFSReadSettings",
 												"recursive": true,
 												"enablePartitionDiscovery": false
 											},
@@ -408,7 +439,7 @@
 										"sink": {
 											"type": "DelimitedTextSink",
 											"storeSettings": {
-												"type": "AzureBlobStorageWriteSettings"
+												"type": "AzureBlobFSWriteSettings"
 											},
 											"formatSettings": {
 												"type": "DelimitedTextWriteSettings",
@@ -417,6 +448,7 @@
 											}
 										},
 										"enableStaging": false,
+										"validateDataConsistency": false,
 										"translator": {
 											"type": "TabularTranslator",
 											"typeConversion": true,
@@ -442,6 +474,10 @@
 												"file_name": {
 													"value": "@pipeline().parameters.file_name",
 													"type": "Expression"
+												},
+												"storage_url": {
+													"value": "@pipeline().globalParameters.source_storage_url",
+													"type": "Expression"
 												}
 											}
 										}
@@ -455,7 +491,7 @@
 													"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
 													"type": "Expression"
 												},
-												"storage_secret": "raw-storage-secret",
+												"storage_secret": "storage-raw-dev-key",
 												"file_name": {
 													"value": "@pipeline().parameters.file_name",
 													"type": "Expression"
@@ -463,12 +499,61 @@
 												"container": {
 													"value": "@pipeline().parameters.success_container",
 													"type": "Expression"
+												},
+												"storage_url": {
+													"value": "@pipeline().globalParameters.raw_storage_url",
+													"type": "Expression"
 												}
 											}
 										}
 									]
 								}
 							]
+						}
+					},
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "SourceDataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"subject": {
+										"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
+										"type": "Expression"
+									},
+									"storage_secret": "@pipeline().parameters.storage_secret",
+									"file_name": {
+										"value": "@pipeline().parameters.file_name",
+										"type": "Expression"
+									},
+									"storage_url": {
+										"value": "@pipeline().globalParameters.source_storage_url",
+										"type": "Expression"
+									}
+								}
+							}
 						}
 					}
 				],
@@ -483,11 +568,11 @@
 					},
 					"storage_secret": {
 						"type": "string",
-						"defaultValue": "source-storage-secret"
+						"defaultValue": "storage-souce-dev-key"
 					},
 					"file_name": {
 						"type": "string",
-						"defaultValue": "sales-20230411.csv"
+						"defaultValue": "sales-20230421.csv"
 					},
 					"success_container": {
 						"type": "string",
@@ -528,7 +613,7 @@
 							"source": {
 								"type": "JsonSource",
 								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
+									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
 									"wildcardFileName": "*.json",
 									"enablePartitionDiscovery": false
@@ -547,6 +632,10 @@
 									},
 									"storage_secret": {
 										"value": "@pipeline().parameters.storage_secret",
+										"type": "Expression"
+									},
+									"storage_url": {
+										"value": "@pipeline().globalParameters.source_storage_url",
 										"type": "Expression"
 									}
 								}
@@ -578,6 +667,10 @@
 									"storage_secret": {
 										"value": "@pipeline().parameters.storage_secret",
 										"type": "Expression"
+									},
+									"storage_url": {
+										"value": "@pipeline().globalParameters.source_storage_url",
+										"type": "Expression"
 									}
 								}
 							},
@@ -585,7 +678,7 @@
 								"childItems"
 							],
 							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
+								"type": "AzureBlobFSReadSettings",
 								"recursive": true,
 								"enablePartitionDiscovery": false
 							},
@@ -740,7 +833,7 @@
 					},
 					"storage_secret": {
 						"type": "string",
-						"defaultValue": "source-storage-secret"
+						"defaultValue": "storage-souce-dev-key"
 					}
 				},
 				"variables": {

@@ -11,13 +11,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
 		},
-		"AzureBlobStorage1DEV_properties_typeProperties_connectionString_secretName": {
-			"type": "string",
-			"defaultValue": "@linkedService().storage_secret"
-		},
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://tmobkeyvaultdev.vault.azure.net/"
+		},
+		"AzureDataLakeStorageDev_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{linkedService().storage_url}"
 		},
 		"containerUri": {
 			"type": "string",
@@ -52,8 +52,8 @@
 					"AzureKeyVault1_properties_typeProperties_baseUrl": {
 						"value": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
 					},
-					"AzureBlobStorage1DEV_properties_typeProperties_connectionString_secretName": {
-						"value": "[parameters('AzureBlobStorage1DEV_properties_typeProperties_connectionString_secretName')]"
+					"AzureDataLakeStorageDev_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorageDev_properties_typeProperties_url')]"
 					}
 				}
 			},
