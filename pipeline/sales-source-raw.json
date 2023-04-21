@@ -226,7 +226,7 @@
 			},
 			"storage_secret": {
 				"type": "string",
-				"defaultValue": "source-storage-secret"
+				"defaultValue": "storage-souce-dev-key"
 			}
 		},
 		"variables": {
