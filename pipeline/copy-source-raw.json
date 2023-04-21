@@ -248,6 +248,10 @@
 							"file_name": {
 								"value": "@pipeline().parameters.file_name",
 								"type": "Expression"
+							},
+							"storage_url": {
+								"value": "@pipeline().globalParameters.source_storage_url",
+								"type": "Expression"
 							}
 						}
 					}
