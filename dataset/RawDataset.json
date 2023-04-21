@@ -2,10 +2,10 @@
 	"name": "RawDataset",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureBlobStorage1DEV",
+			"referenceName": "AzureDataLakeStorageDev",
 			"type": "LinkedServiceReference",
 			"parameters": {
-				"storage_secret": {
+				"secret_name": {
 					"value": "@dataset().storage_secret",
 					"type": "Expression"
 				}
@@ -33,7 +33,7 @@
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobStorageLocation",
+				"type": "AzureBlobFSLocation",
 				"fileName": {
 					"value": "@dataset().file_name",
 					"type": "Expression"
@@ -42,7 +42,7 @@
 					"value": "@dataset().subject",
 					"type": "Expression"
 				},
-				"container": {
+				"fileSystem": {
 					"value": "@dataset().container",
 					"type": "Expression"
 				}

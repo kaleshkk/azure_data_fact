@@ -2,10 +2,10 @@
 	"name": "CatalogDataset",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureBlobStorage1DEV",
+			"referenceName": "AzureDataLakeStorageDev",
 			"type": "LinkedServiceReference",
 			"parameters": {
-				"storage_secret": {
+				"secret_name": {
 					"value": "@dataset().storage_secret",
 					"type": "Expression"
 				}
@@ -23,12 +23,12 @@
 		"type": "Json",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobStorageLocation",
+				"type": "AzureBlobFSLocation",
 				"folderPath": {
 					"value": "@dataset().subject",
 					"type": "Expression"
 				},
-				"container": "landing"
+				"fileSystem": "landing"
 			}
 		},
 		"schema": {}
