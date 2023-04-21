@@ -1,0 +1,27 @@
+{
+	"name": "AzureDataLakeStorageDev",
+	"properties": {
+		"parameters": {
+			"secret_name": {
+				"type": "string",
+				"defaultValue": "storage-souce-dev-key"
+			}
+		},
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://tmobsourcedev.dfs.core.windows.net/",
+			"accountKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVault1",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": {
+					"value": "@linkedService().secret_name",
+					"type": "Expression"
+				}
+			}
+		}
+	}
+}
