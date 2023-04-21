@@ -1,0 +1,12 @@
+{
+	"name": "tmobadfdev",
+	"properties": {
+		"globalParameters": {
+			"source_storage_url": {
+				"type": "string",
+				"value": "https://tmobsourcedev.dfs.core.windows.net/"
+			}
+		}
+	},
+	"location": "eastus"
+}
