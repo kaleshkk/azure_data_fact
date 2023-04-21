@@ -21,7 +21,10 @@
 					"referenceName": "AzureKeyVault1",
 					"type": "LinkedServiceReference"
 				},
-				"secretName": "storage-raw-dev-key"
+				"secretName": {
+					"value": "@linkedService().secret_name",
+					"type": "Expression"
+				}
 			}
 		}
 	}
