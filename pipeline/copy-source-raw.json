@@ -16,26 +16,8 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "SourceDataset",
-						"type": "DatasetReference",
-						"parameters": {
-							"subject": {
-								"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
-								"type": "Expression"
-							},
-							"storage_secret": {
-								"value": "@pipeline().parameters.storage_secret",
-								"type": "Expression"
-							},
-							"file_name": {
-								"value": "@pipeline().parameters.file_name",
-								"type": "Expression"
-							},
-							"storage_url": {
-								"value": "@pipeline().globalParameters.source_storage_url",
-								"type": "Expression"
-							}
-						}
+						"referenceName": "DelimitedText1",
+						"type": "DatasetReference"
 					},
 					"fieldList": [
 						"structure"
@@ -161,26 +143,8 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "SourceDataset",
-									"type": "DatasetReference",
-									"parameters": {
-										"subject": {
-											"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
-											"type": "Expression"
-										},
-										"storage_secret": {
-											"value": "@pipeline().parameters.storage_secret",
-											"type": "Expression"
-										},
-										"file_name": {
-											"value": "@pipeline().parameters.file_name",
-											"type": "Expression"
-										},
-										"storage_url": {
-											"value": "@pipeline().globalParameters.source_storage_url",
-											"type": "Expression"
-										}
-									}
+									"referenceName": "DelimitedText1",
+									"type": "DatasetReference"
 								}
 							],
 							"outputs": [
