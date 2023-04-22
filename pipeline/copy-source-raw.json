@@ -20,7 +20,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"subject": {
-								"value": "@pipeline().parameters.subject",
+								"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
 								"type": "Expression"
 							},
 							"storage_secret": {
@@ -165,7 +165,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"subject": {
-											"value": "@pipeline().parameters.subject",
+											"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
 											"type": "Expression"
 										},
 										"storage_secret": {
@@ -210,51 +210,6 @@
 							]
 						}
 					]
-				}
-			},
-			{
-				"name": "Lookup1",
-				"type": "Lookup",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "DelimitedTextSource",
-						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
-						}
-					},
-					"dataset": {
-						"referenceName": "SourceDataset",
-						"type": "DatasetReference",
-						"parameters": {
-							"subject": {
-								"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
-								"type": "Expression"
-							},
-							"storage_secret": "@pipeline().parameters.storage_secret",
-							"file_name": {
-								"value": "@pipeline().parameters.file_name",
-								"type": "Expression"
-							},
-							"storage_url": {
-								"value": "@pipeline().globalParameters.source_storage_url",
-								"type": "Expression"
-							}
-						}
-					}
 				}
 			}
 		],
