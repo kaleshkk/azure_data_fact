@@ -5,7 +5,7 @@
 			"referenceName": "AzureDataLakeStorageDev",
 			"type": "LinkedServiceReference",
 			"parameters": {
-				"secret_name": "storage-raw-dev-key",
+				"secret_name": "storage-souce-dev-key",
 				"storage_url": "https://tmobsourcedev.dfs.core.windows.net/"
 			}
 		},
