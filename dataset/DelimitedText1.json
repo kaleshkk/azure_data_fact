@@ -30,87 +30,115 @@
 		},
 		"schema": [
 			{
+				"name": "OrderDate",
 				"type": "String"
 			},
 			{
+				"name": "Category",
 				"type": "String"
 			},
 			{
+				"name": "City",
 				"type": "String"
 			},
 			{
+				"name": "Country",
 				"type": "String"
 			},
 			{
+				"name": "CustomerName",
 				"type": "String"
 			},
 			{
+				"name": "Discount",
 				"type": "String"
 			},
 			{
+				"name": "OrderID",
 				"type": "String"
 			},
 			{
+				"name": "PostalCode",
 				"type": "String"
 			},
 			{
+				"name": "ProductName",
 				"type": "String"
 			},
 			{
+				"name": "Profit",
 				"type": "String"
 			},
 			{
+				"name": "Quantity",
 				"type": "String"
 			},
 			{
+				"name": "Region",
 				"type": "String"
 			},
 			{
+				"name": "Sales",
 				"type": "String"
 			},
 			{
+				"name": "Segment",
 				"type": "String"
 			},
 			{
+				"name": "ShipDate",
 				"type": "String"
 			},
 			{
+				"name": "ShipMode",
 				"type": "String"
 			},
 			{
+				"name": "State",
 				"type": "String"
 			},
 			{
+				"name": "Sub_Category",
 				"type": "String"
 			},
 			{
+				"name": "DaystoShipActual",
 				"type": "String"
 			},
 			{
+				"name": "SalesForecast",
 				"type": "String"
 			},
 			{
+				"name": "ShipStatus",
 				"type": "String"
 			},
 			{
+				"name": "DaystoShipScheduled",
 				"type": "String"
 			},
 			{
+				"name": "OrderProfitable",
 				"type": "String"
 			},
 			{
+				"name": "SalesperCustomer",
 				"type": "String"
 			},
 			{
+				"name": "ProfitRatio",
 				"type": "String"
 			},
 			{
+				"name": "SalesaboveTarget",
 				"type": "String"
 			},
 			{
+				"name": "latitude",
 				"type": "String"
 			},
 			{
+				"name": "longitude",
 				"type": "String"
 			}
 		]
