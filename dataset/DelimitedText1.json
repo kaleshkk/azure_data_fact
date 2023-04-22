@@ -5,8 +5,28 @@
 			"referenceName": "AzureDataLakeStorageDev",
 			"type": "LinkedServiceReference",
 			"parameters": {
-				"secret_name": "storage-souce-dev-key",
-				"storage_url": "https://tmobsourcedev.dfs.core.windows.net/"
+				"secret_name": {
+					"value": "@dataset().storage_secret",
+					"type": "Expression"
+				},
+				"storage_url": {
+					"value": "@dataset().storage_url",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"subject": {
+				"type": "string"
+			},
+			"storage_secret": {
+				"type": "string"
+			},
+			"file_name": {
+				"type": "string"
+			},
+			"storage_url": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
@@ -14,8 +34,14 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "sales-20230421.csv",
-				"folderPath": "Sales/20230421",
+				"fileName": {
+					"value": "@dataset().file_name",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().subject",
+					"type": "Expression"
+				},
 				"fileSystem": "landing"
 			},
 			"columnDelimiter": ",",
