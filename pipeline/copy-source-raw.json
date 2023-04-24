@@ -16,23 +16,17 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "DelimitedText1",
+						"referenceName": "SourceDataset",
 						"type": "DatasetReference",
 						"parameters": {
-							"subject": {
-								"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
-								"type": "Expression"
-							},
-							"storage_secret": {
-								"value": "@pipeline().parameters.storage_secret",
-								"type": "Expression"
-							},
-							"file_name": {
-								"value": "@pipeline().parameters.file_name",
-								"type": "Expression"
-							},
+							"subject": "Sales/20230408",
+							"file_name": "sales-20230408.csv",
 							"storage_url": {
 								"value": "@pipeline().globalParameters.source_storage_url",
+								"type": "Expression"
+							},
+							"enable_header": {
+								"value": "@bool(0)",
 								"type": "Expression"
 							}
 						}
@@ -161,23 +155,21 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "DelimitedText1",
+									"referenceName": "SourceDataset",
 									"type": "DatasetReference",
 									"parameters": {
-										"subject": {
-											"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
-											"type": "Expression"
-										},
+										"subject": "Sales/20230408",
 										"storage_secret": {
 											"value": "@pipeline().parameters.storage_secret",
 											"type": "Expression"
 										},
-										"file_name": {
-											"value": "@pipeline().parameters.file_name",
-											"type": "Expression"
-										},
+										"file_name": "sales-20230408.csv",
 										"storage_url": {
 											"value": "@pipeline().globalParameters.source_storage_url",
+											"type": "Expression"
+										},
+										"enable_header": {
+											"value": "@bool(1)",
 											"type": "Expression"
 										}
 									}
