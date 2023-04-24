@@ -232,7 +232,8 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
-					"message": "faill test"
+					"message": "faill test",
+					"errorCode": "402"
 				}
 			}
 		],
