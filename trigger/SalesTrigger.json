@@ -3,6 +3,16 @@
 	"properties": {
 		"annotations": [],
 		"runtimeState": "Started",
+		"pipeline": {
+			"pipelineReference": {
+				"referenceName": "sales-source-raw",
+				"type": "PipelineReference"
+			},
+			"parameters": {
+				"subject": "Sales",
+				"storage_secret": "storage-souce-dev-key"
+			}
+		},
 		"type": "TumblingWindowTrigger",
 		"typeProperties": {
 			"frequency": "Hour",
