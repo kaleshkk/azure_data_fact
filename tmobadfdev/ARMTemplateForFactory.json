@@ -7,17 +7,25 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "tmobadfdev"
 		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+		},
 		"AzureSqlDatabase1_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
 		},
-		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://tmobkeyvaultdev.vault.azure.net/"
+			"defaultValue": "https://tmobsourcedev.dfs.core.windows.net/"
 		},
 		"AzureDataLakeStorageDev_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "@{linkedService().storage_url}"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://tmobkeyvaultdev.vault.azure.net/"
 		}
 	},
 	"variables": {
@@ -48,7 +56,7 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"subject": {
-										"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
+										"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    formatDateTime(pipeline().TriggerTime, 'yyyyMMdd')\n)",
 										"type": "Expression"
 									},
 									"storage_secret": {
@@ -61,6 +69,10 @@
 									},
 									"storage_url": {
 										"value": "@pipeline().globalParameters.source_storage_url",
+										"type": "Expression"
+									},
+									"enable_header": {
+										"value": "@bool(1)",
 										"type": "Expression"
 									}
 								}
@@ -194,7 +206,7 @@
 											"type": "DatasetReference",
 											"parameters": {
 												"subject": {
-													"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
+													"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    formatDateTime(pipeline().TriggerTime, 'yyyyMMdd')\n)",
 													"type": "Expression"
 												},
 												"storage_secret": {
@@ -207,6 +219,10 @@
 												},
 												"storage_url": {
 													"value": "@pipeline().globalParameters.source_storage_url",
+													"type": "Expression"
+												},
+												"enable_header": {
+													"value": "@bool(0)",
 													"type": "Expression"
 												}
 											}
@@ -239,51 +255,6 @@
 									]
 								}
 							]
-						}
-					},
-					{
-						"name": "Lookup1",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"dataset": {
-								"referenceName": "SourceDataset",
-								"type": "DatasetReference",
-								"parameters": {
-									"subject": {
-										"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
-										"type": "Expression"
-									},
-									"storage_secret": "@pipeline().parameters.storage_secret",
-									"file_name": {
-										"value": "@pipeline().parameters.file_name",
-										"type": "Expression"
-									},
-									"storage_url": {
-										"value": "@pipeline().globalParameters.source_storage_url",
-										"type": "Expression"
-									}
-								}
-							}
 						}
 					}
 				],
@@ -318,6 +289,101 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SourceDataset')]",
 				"[concat(variables('factoryId'), '/datasets/SchemaDataset')]",
+				"[concat(variables('factoryId'), '/datasets/RawDataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DelimitedText1",
+								"type": "DatasetReference",
+								"parameters": {
+									"subject": "Sales/20230421",
+									"storage_secret": "storage-souce-dev-key",
+									"file_name": "sales-20230421.csv",
+									"storage_url": {
+										"value": "@pipeline().globalParameters.source_storage_url",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "RawDataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"subject": "Sales/20230408",
+									"storage_secret": "storage-raw-dev-key",
+									"file_name": "sales-20230408.csv",
+									"container": "imported",
+									"storage_url": {
+										"value": "@pipeline().globalParameters.raw_storage_url",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]",
 				"[concat(variables('factoryId'), '/datasets/RawDataset')]"
 			]
 		},
@@ -391,7 +457,7 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"subject": {
-										"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
+										"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    formatDateTime(pipeline().TriggerTime, 'yyyyMMdd')\n)",
 										"type": "Expression"
 									},
 									"storage_secret": {
@@ -636,6 +702,150 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorageDev",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"secret_name": {
+							"value": "@dataset().storage_secret",
+							"type": "Expression"
+						},
+						"storage_url": {
+							"value": "@dataset().storage_url",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"subject": {
+						"type": "string"
+					},
+					"storage_secret": {
+						"type": "string"
+					},
+					"file_name": {
+						"type": "string"
+					},
+					"storage_url": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().file_name",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().subject",
+							"type": "Expression"
+						},
+						"fileSystem": "landing"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorageDev')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/RawDataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -767,6 +977,10 @@
 					},
 					"storage_url": {
 						"type": "string"
+					},
+					"enable_header": {
+						"type": "bool",
+						"defaultValue": false
 					}
 				},
 				"annotations": [],
@@ -786,7 +1000,10 @@
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
-					"firstRowAsHeader": true,
+					"firstRowAsHeader": {
+						"value": "@dataset().enable_header",
+						"type": "Expression"
+					},
 					"quoteChar": "\""
 				},
 				"schema": []
@@ -796,27 +1013,18 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureKeyVault1')]",
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"type": "AzureKeyVault",
+				"type": "AzureBlobFS",
 				"typeProperties": {
-					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureSqlDatabase1_connectionString')]"
+					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					}
 				}
 			},
 			"dependsOn": []
@@ -856,6 +1064,32 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault1')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureKeyVault1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDatabase1_connectionString')]"
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }

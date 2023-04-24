@@ -5,14 +5,20 @@
 		"factoryName": {
 			"value": "tmobadfdev"
 		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
 		"AzureSqlDatabase1_connectionString": {
 			"value": ""
 		},
-		"AzureKeyVault1_properties_typeProperties_baseUrl": {
-			"value": "https://tmobkeyvaultdev.vault.azure.net/"
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://tmobsourcedev.dfs.core.windows.net/"
 		},
 		"AzureDataLakeStorageDev_properties_typeProperties_url": {
 			"value": "@{linkedService().storage_url}"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://tmobkeyvaultdev.vault.azure.net/"
 		}
 	}
 }
