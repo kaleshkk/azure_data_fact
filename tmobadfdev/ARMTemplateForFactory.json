@@ -616,6 +616,16 @@
 								}
 							]
 						}
+					},
+					{
+						"name": "Fail1",
+						"type": "Fail",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"message": "faill test",
+							"errorCode": "402"
+						}
 					}
 				],
 				"policy": {
