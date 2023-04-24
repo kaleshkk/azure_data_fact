@@ -19,14 +19,18 @@
 						"referenceName": "SourceDataset",
 						"type": "DatasetReference",
 						"parameters": {
-							"subject": "Sales/20230408",
-							"file_name": "sales-20230408.csv",
+							"subject": "Sales/20230424",
+							"storage_secret": {
+								"value": "@pipeline().parameters.storage_secret",
+								"type": "Expression"
+							},
+							"file_name": "sales-20230424.csv",
 							"storage_url": {
 								"value": "@pipeline().globalParameters.source_storage_url",
 								"type": "Expression"
 							},
 							"enable_header": {
-								"value": "@bool(0)",
+								"value": "@bool(1)",
 								"type": "Expression"
 							}
 						}
@@ -169,7 +173,7 @@
 											"type": "Expression"
 										},
 										"enable_header": {
-											"value": "@bool(1)",
+											"value": "@bool(0)",
 											"type": "Expression"
 										}
 									}

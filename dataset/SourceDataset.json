@@ -32,7 +32,7 @@
 			},
 			"enable_header": {
 				"type": "bool",
-				"defaultValue": "0"
+				"defaultValue": false
 			}
 		},
 		"annotations": [],

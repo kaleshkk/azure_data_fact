@@ -66,7 +66,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"subject": {
-								"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    utcnow('yyyyMMdd')\n)",
+								"value": "@concat(\n    concat(\n        pipeline().parameters.subject, \n        '/'\n    ),\n    formatDateTime(pipeline().TriggerTime, 'yyyyMMdd')\n)",
 								"type": "Expression"
 							},
 							"storage_secret": {
