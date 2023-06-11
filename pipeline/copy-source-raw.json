@@ -216,6 +216,64 @@
 									}
 								}
 							]
+						},
+						{
+							"name": "Set variable1",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Copy data",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "row_copied",
+								"value": {
+									"value": "@activity('Copy data').output.rowsCopied",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "If Condition2",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "If Condition1",
+						"dependencyConditions": [
+							"Skipped"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(variables('row_copied'), pipeline().parameters.number_of_records)",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Fail1",
+							"type": "Fail",
+							"dependsOn": [],
+							"userProperties": []
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Wait2",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 1
+							}
 						}
 					]
 				}
@@ -245,6 +303,11 @@
 			"number_of_records": {
 				"type": "string",
 				"defaultValue": "0"
+			}
+		},
+		"variables": {
+			"row_copied": {
+				"type": "String"
 			}
 		},
 		"annotations": []
