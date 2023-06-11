@@ -262,7 +262,11 @@
 							"name": "Fail1",
 							"type": "Fail",
 							"dependsOn": [],
-							"userProperties": []
+							"userProperties": [],
+							"typeProperties": {
+								"message": "Failed",
+								"errorCode": "400"
+							}
 						}
 					],
 					"ifTrueActivities": [
