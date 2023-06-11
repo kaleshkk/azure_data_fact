@@ -218,7 +218,7 @@
 												"success_container": "imported",
 												"error_container": "error",
 												"number_of_records": {
-													"value": "@activity('Filter1').output.value.count",
+													"value": "@activity('Filter1').output.value[0].count",
 													"type": "Expression"
 												}
 											}
