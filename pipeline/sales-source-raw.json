@@ -216,7 +216,11 @@
 													"type": "Expression"
 												},
 												"success_container": "imported",
-												"error_container": "error"
+												"error_container": "error",
+												"number_of_records": {
+													"value": "@activity('Filter1').output.value.count",
+													"type": "Expression"
+												}
 											}
 										}
 									}
