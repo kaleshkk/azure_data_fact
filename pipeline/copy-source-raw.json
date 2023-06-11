@@ -241,6 +241,10 @@
 			"error_container": {
 				"type": "string",
 				"defaultValue": "error"
+			},
+			"number_of_records": {
+				"type": "string",
+				"defaultValue": "0"
 			}
 		},
 		"annotations": []
