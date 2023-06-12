@@ -15,6 +15,13 @@
 			"sinks": [],
 			"transformations": [],
 			"scriptLines": [
+				"parameters{",
+				"     subject as string (\"Sales\"),",
+				"     storage_secret as string (\"storage-raw-dev-key\"),",
+				"     file_name as string (\"\"),",
+				"     container as string (\"imported\"),",
+				"     storage_url as string (\"https://tmobrawdev.dfs.core.windows.net/\")",
+				"}",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source1"
