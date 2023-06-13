@@ -30,11 +30,11 @@
 			},
 			"container": {
 				"type": "string",
-				"defaultValue": "imported"
+				"defaultValue": "hello"
 			},
 			"storage_url": {
 				"type": "string",
-				"defaultValue": "hello"
+				"defaultValue": "https://tmobrawdev.dfs.core.windows.net/"
 			}
 		},
 		"annotations": [],
