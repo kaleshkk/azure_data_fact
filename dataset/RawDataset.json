@@ -30,7 +30,7 @@
 			},
 			"container": {
 				"type": "string",
-				"defaultValue": "hello"
+				"defaultValue": "imported"
 			},
 			"storage_url": {
 				"type": "string",
