@@ -22,7 +22,7 @@
 			},
 			"storage_secret": {
 				"type": "string",
-				"defaultValue": "hello"
+				"defaultValue": "storage-raw-dev-key"
 			},
 			"file_name": {
 				"type": "string",
@@ -34,7 +34,7 @@
 			},
 			"storage_url": {
 				"type": "string",
-				"defaultValue": "https://tmobrawdev.dfs.core.windows.net/"
+				"defaultValue": "hello"
 			}
 		},
 		"annotations": [],
