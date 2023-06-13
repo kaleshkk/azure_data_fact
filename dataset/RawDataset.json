@@ -22,7 +22,7 @@
 			},
 			"storage_secret": {
 				"type": "string",
-				"defaultValue": "storage-raw-dev-key"
+				"defaultValue": "storage-raw-dev-key-defualt"
 			},
 			"file_name": {
 				"type": "string",
