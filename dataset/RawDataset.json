@@ -33,7 +33,8 @@
 				"defaultValue": "imported"
 			},
 			"storage_url": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "https://tmobrawdev.dfs.core.windows.net/"
 			}
 		},
 		"annotations": [],
