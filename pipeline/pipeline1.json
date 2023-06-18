@@ -25,6 +25,13 @@
 								"file_name": "sales-20230408.csv",
 								"container": "imported",
 								"storage_url": "https://tmobrawdev.dfs.core.windows.net/"
+							},
+							"sink1": {
+								"subject": "Sales_Processed/20230408",
+								"storage_secret": "storage-raw-dev-key",
+								"file_name": "sales-20230408.csv",
+								"container": "imported",
+								"storage_url": "https://tmobrawdev.dfs.core.windows.net/"
 							}
 						}
 					},
