@@ -20,18 +20,48 @@
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"source1": {
-								"subject": "Sales/20230408",
-								"storage_secret": "storage-raw-dev-key",
-								"file_name": "sales-20230408.csv",
-								"container": "imported",
-								"storage_url": "https://tmobrawdev.dfs.core.windows.net/"
+								"subject": {
+									"value": "@string('Sales/20230408')",
+									"type": "Expression"
+								},
+								"storage_secret": {
+									"value": "@string('storage-raw-dev-key')",
+									"type": "Expression"
+								},
+								"file_name": {
+									"value": "@string('sales-20230408.csv')",
+									"type": "Expression"
+								},
+								"container": {
+									"value": "@string('imported')",
+									"type": "Expression"
+								},
+								"storage_url": {
+									"value": "@string('https://tmobrawdev.dfs.core.windows.net/')",
+									"type": "Expression"
+								}
 							},
 							"sink1": {
-								"subject": "Sales_Processed/20230408",
-								"storage_secret": "storage-raw-dev-key",
-								"file_name": "sales-20230408.csv",
-								"container": "imported",
-								"storage_url": "https://tmobrawdev.dfs.core.windows.net/"
+								"subject": {
+									"value": "@string('Sales_Processed/20230408')",
+									"type": "Expression"
+								},
+								"storage_secret": {
+									"value": "@string('storage-raw-dev-key')",
+									"type": "Expression"
+								},
+								"file_name": {
+									"value": "@string('sales-20230408.csv')",
+									"type": "Expression"
+								},
+								"container": {
+									"value": "@string('imported')",
+									"type": "Expression"
+								},
+								"storage_url": {
+									"value": "@string('https://tmobrawdev.dfs.core.windows.net/')",
+									"type": "Expression"
+								}
 							}
 						}
 					},
