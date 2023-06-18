@@ -1,5 +1,5 @@
 {
-	"name": "raw-to-prepared",
+	"name": "rawToPrepared",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
