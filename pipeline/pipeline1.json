@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "raw-to-prepared",
+						"referenceName": "rawToPrepared",
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"source1": {
