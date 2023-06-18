@@ -9,14 +9,34 @@
 				"storage_url": "https://tmobrawdev.dfs.core.windows.net/"
 			}
 		},
+		"parameters": {
+			"container": {
+				"type": "string"
+			},
+			"file_name": {
+				"type": "string"
+			},
+			"subject": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "sales-20230408.csv",
-				"folderPath": "Sales/20230408",
-				"fileSystem": "imported"
+				"fileName": {
+					"value": "@dataset().file_name",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().subject",
+					"type": "Expression"
+				},
+				"fileSystem": {
+					"value": "@dataset().container",
+					"type": "Expression"
+				}
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
