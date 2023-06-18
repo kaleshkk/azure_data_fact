@@ -72,7 +72,7 @@
 				"     ignoreNoFilesFound: false) ~> source1",
 				"source1 derive(OrderDate = toDate(OrderDate, \"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\"),",
 				"          meta_ingestdt = currentTimestamp()) ~> DateFormatting",
-				"DateFormatting split(!isNull(OrderDate),",
+				"DateFormatting split(isNull(OrderDate),",
 				"     disjoint: false) ~> split1@(Success, Error)",
 				"split1@Success sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
