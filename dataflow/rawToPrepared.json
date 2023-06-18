@@ -34,6 +34,9 @@
 				},
 				{
 					"name": "split1"
+				},
+				{
+					"name": "alterRow1"
 				}
 			],
 			"scriptLines": [
@@ -72,10 +75,13 @@
 				"     ignoreNoFilesFound: false) ~> source1",
 				"source1 derive(OrderDate = toDate(OrderDate, \"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\"),",
 				"          meta_ingestdt = currentTimestamp()) ~> DateFormatting",
-				"DateFormatting split(isNull(OrderDate),",
+				"alterRow1 split(!isNull(OrderDate),",
 				"     disjoint: false) ~> split1@(Success, Error)",
+				"DateFormatting alterRow(insertIf(Country=='India'),",
+				"     updateIf(Country=='United States')) ~> alterRow1",
 				"split1@Success sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     truncate: true,",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
@@ -83,6 +89,7 @@
 				"     skipDuplicateMapOutputs: true) ~> sink1",
 				"split1@Error sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     truncate: true,",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
