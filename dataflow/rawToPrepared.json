@@ -19,20 +19,75 @@
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "RawDataset",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
 				}
 			],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "DateFormatting"
+				},
+				{
+					"name": "split1"
+				}
+			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          OrderDate as string,",
+				"          Category as string,",
+				"          City as string,",
+				"          Country as string,",
+				"          CustomerName as string,",
+				"          Discount as double,",
+				"          OrderID as string,",
+				"          PostalCode as integer,",
+				"          ProductName as string,",
+				"          Profit as short,",
+				"          Quantity as short,",
+				"          Region as string,",
+				"          Sales as short,",
+				"          Segment as string,",
+				"          ShipDate as string,",
+				"          ShipMode as string,",
+				"          State as string,",
+				"          Sub_Category as string,",
+				"          DaystoShipActual as short,",
+				"          SalesForecast as short,",
+				"          ShipStatus as string,",
+				"          DaystoShipScheduled as short,",
+				"          OrderProfitable as string,",
+				"          SalesperCustomer as double,",
+				"          ProfitRatio as double,",
+				"          SalesaboveTarget as string,",
+				"          latitude as double,",
+				"          longitude as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 sink(allowSchemaDrift: true,",
+				"source1 derive(OrderDate = toDate(OrderDate, \"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\"),",
+				"          meta_ingestdt = currentTimestamp()) ~> DateFormatting",
+				"DateFormatting split(!isNull(OrderDate),",
+				"     disjoint: false) ~> split1@(Success, Error)",
+				"split1@Success sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true) ~> sink1",
+				"split1@Error sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink2"
 			]
 		}
 	}
