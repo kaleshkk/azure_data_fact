@@ -26,6 +26,14 @@
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://tmobkeyvaultdev.vault.azure.net/"
+		},
+		"SalesTrigger_properties_pipeline_parameters_subject": {
+			"type": "string",
+			"defaultValue": "Sales"
+		},
+		"SalesTrigger_properties_pipeline_parameters_storage_secret": {
+			"type": "string",
+			"defaultValue": "storage-souce-dev-key"
 		}
 	},
 	"variables": {
@@ -253,6 +261,74 @@
 											}
 										}
 									]
+								},
+								{
+									"name": "Set variable1",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Copy data",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "row_copied",
+										"value": {
+											"value": "@string(activity('Copy data').output.rowsCopied)",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "If Condition2",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "If Condition1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(variables('row_copied'), pipeline().parameters.number_of_records)",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "Fail1",
+									"type": "Fail",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"message": "Failed",
+										"errorCode": "400"
+									}
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "Wait2",
+									"type": "Wait",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"waitTimeInSeconds": 1
+									}
 								}
 							]
 						}
@@ -282,6 +358,15 @@
 					"error_container": {
 						"type": "string",
 						"defaultValue": "error"
+					},
+					"number_of_records": {
+						"type": "string",
+						"defaultValue": "0"
+					}
+				},
+				"variables": {
+					"row_copied": {
+						"type": "String"
 					}
 				},
 				"annotations": []
@@ -299,8 +384,8 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data1",
-						"type": "Copy",
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -311,69 +396,34 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "DelimitedText1",
-								"type": "DatasetReference",
-								"parameters": {
-									"subject": "Sales/20230421",
-									"storage_secret": "storage-souce-dev-key",
-									"file_name": "sales-20230421.csv",
-									"storage_url": {
-										"value": "@pipeline().globalParameters.source_storage_url",
-										"type": "Expression"
+							"dataflow": {
+								"referenceName": "raw-to-prepared",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {
+										"subject": "Sales/20230408",
+										"storage_secret": "storage-raw-dev-key",
+										"file_name": "sales-20230408.csv",
+										"container": "imported",
+										"storage_url": "https://tmobrawdev.dfs.core.windows.net/"
+									},
+									"sink1": {
+										"subject": "Sales_Processed/20230408",
+										"storage_secret": "storage-raw-dev-key",
+										"file_name": "sales-20230408.csv",
+										"container": "imported",
+										"storage_url": "https://tmobrawdev.dfs.core.windows.net/"
 									}
 								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "RawDataset",
-								"type": "DatasetReference",
-								"parameters": {
-									"subject": "Sales/20230408",
-									"storage_secret": "storage-raw-dev-key",
-									"file_name": "sales-20230408.csv",
-									"container": "imported",
-									"storage_url": {
-										"value": "@pipeline().globalParameters.raw_storage_url",
-										"type": "Expression"
-									}
-								}
-							}
-						]
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
 					}
 				],
 				"policy": {
@@ -383,8 +433,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]",
-				"[concat(variables('factoryId'), '/datasets/RawDataset')]"
+				"[concat(variables('factoryId'), '/dataflows/raw-to-prepared')]"
 			]
 		},
 		{
@@ -494,6 +543,12 @@
 								]
 							}
 						],
+						"policy": {
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "list_of_files",
@@ -555,6 +610,12 @@
 									"name": "SetCurrentFileName",
 									"type": "SetVariable",
 									"dependsOn": [],
+									"policy": {
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"variableName": "current_file_name",
@@ -607,7 +668,11 @@
 															"type": "Expression"
 														},
 														"success_container": "imported",
-														"error_container": "error"
+														"error_container": "error",
+														"number_of_records": {
+															"value": "@activity('Filter1').output.value[0].count",
+															"type": "Expression"
+														}
 													}
 												}
 											}
@@ -615,16 +680,6 @@
 									}
 								}
 							]
-						}
-					},
-					{
-						"name": "Fail1",
-						"type": "Fail",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"message": "faill test",
-							"errorCode": "402"
 						}
 					}
 				],
@@ -720,27 +775,18 @@
 					"referenceName": "AzureDataLakeStorageDev",
 					"type": "LinkedServiceReference",
 					"parameters": {
-						"secret_name": {
-							"value": "@dataset().storage_secret",
-							"type": "Expression"
-						},
-						"storage_url": {
-							"value": "@dataset().storage_url",
-							"type": "Expression"
-						}
+						"secret_name": "storage-raw-dev-key",
+						"storage_url": "https://tmobrawdev.dfs.core.windows.net/"
 					}
 				},
 				"parameters": {
-					"subject": {
-						"type": "string"
-					},
-					"storage_secret": {
+					"container": {
 						"type": "string"
 					},
 					"file_name": {
 						"type": "string"
 					},
-					"storage_url": {
+					"subject": {
 						"type": "string"
 					}
 				},
@@ -757,99 +803,17 @@
 							"value": "@dataset().subject",
 							"type": "Expression"
 						},
-						"fileSystem": "landing"
+						"fileSystem": {
+							"value": "@dataset().container",
+							"type": "Expression"
+						}
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorageDev')]"
@@ -892,7 +856,8 @@
 						"defaultValue": "imported"
 					},
 					"storage_url": {
-						"type": "string"
+						"type": "string",
+						"defaultValue": "https://tmobrawdev.dfs.core.windows.net/"
 					}
 				},
 				"annotations": [],
@@ -1100,6 +1065,84 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SalesTrigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipeline": {
+					"pipelineReference": {
+						"referenceName": "sales-source-raw",
+						"type": "PipelineReference"
+					},
+					"parameters": {
+						"subject": "[parameters('SalesTrigger_properties_pipeline_parameters_subject')]",
+						"storage_secret": "[parameters('SalesTrigger_properties_pipeline_parameters_storage_secret')]"
+					}
+				},
+				"type": "TumblingWindowTrigger",
+				"typeProperties": {
+					"frequency": "Hour",
+					"interval": 24,
+					"startTime": "2023-04-24T05:10:00Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 50,
+					"retryPolicy": {
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/sales-source-raw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/raw-to-prepared')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "RawDataset",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "RawDataset",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/RawDataset')]"
+			]
 		}
 	]
 }

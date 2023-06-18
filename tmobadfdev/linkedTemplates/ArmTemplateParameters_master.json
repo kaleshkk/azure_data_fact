@@ -20,6 +20,12 @@
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"value": "https://tmobkeyvaultdev.vault.azure.net/"
 		},
+		"SalesTrigger_properties_pipeline_parameters_subject": {
+			"value": "Sales"
+		},
+		"SalesTrigger_properties_pipeline_parameters_storage_secret": {
+			"value": "storage-souce-dev-key"
+		},
 		"containerUri": {
 			"value": ""
 		},

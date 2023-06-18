@@ -27,6 +27,14 @@
 			"type": "string",
 			"defaultValue": "https://tmobkeyvaultdev.vault.azure.net/"
 		},
+		"SalesTrigger_properties_pipeline_parameters_subject": {
+			"type": "string",
+			"defaultValue": "Sales"
+		},
+		"SalesTrigger_properties_pipeline_parameters_storage_secret": {
+			"type": "string",
+			"defaultValue": "storage-souce-dev-key"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -68,6 +76,12 @@
 					},
 					"AzureDataLakeStorageDev_properties_typeProperties_url": {
 						"value": "[parameters('AzureDataLakeStorageDev_properties_typeProperties_url')]"
+					},
+					"SalesTrigger_properties_pipeline_parameters_subject": {
+						"value": "[parameters('SalesTrigger_properties_pipeline_parameters_subject')]"
+					},
+					"SalesTrigger_properties_pipeline_parameters_storage_secret": {
+						"value": "[parameters('SalesTrigger_properties_pipeline_parameters_storage_secret')]"
 					}
 				}
 			},
