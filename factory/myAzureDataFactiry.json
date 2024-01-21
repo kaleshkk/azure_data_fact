@@ -1,0 +1,9 @@
+{
+	"name": "myAzureDataFactiry",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "ee62d785-2071-4682-8be9-40bc8864cf64",
+		"tenantId": "36fc6a24-7c62-4cce-b2f3-04d40551dc4e"
+	}
+}
